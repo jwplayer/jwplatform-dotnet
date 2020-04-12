@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace jwplatform
 {
-    public class Client
+    internal class Client
     {
         private readonly string apiKey;
         private readonly string apiSecret;
@@ -30,12 +30,7 @@ namespace jwplatform
 
         public async Task<HttpResponseMessage> GetAsync(string path, Dictionary<string, string> requestParams) {
             var fullUri = path + BuildParams(requestParams);
-            try {
-                return await httpClient.GetAsync(fullUri);
-            }
-            catch (Exception ex) {
-                throw ex;
-            }
+            return await httpClient.GetAsync(fullUri);
         }
 
         public async Task<HttpResponseMessage> PostAsync(string path, Dictionary<string, string> requestParams, bool hasBodyParams) {
@@ -46,18 +41,13 @@ namespace jwplatform
             return await httpClient.PostAsync(fullUri, content);
         }
 
-        internal string Upload(string uploadUrl, string filePath) {
+        public string Upload(string uploadUrl, string filePath) {
             if (!File.Exists(filePath))
                 throw new ArgumentException("File does not exist");
 
             using (var webClient = new WebClient()) {
-                try {
-                    var response = webClient.UploadFile(new Uri(uploadUrl), filePath);
-                    return System.Text.Encoding.ASCII.GetString(response);
-                }
-                catch(Exception ex) {
-                    throw ex;
-                }
+                var response = webClient.UploadFile(new Uri(uploadUrl), filePath);
+                return System.Text.Encoding.ASCII.GetString(response);
             }
         }
 

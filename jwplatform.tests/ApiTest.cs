@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace jwplatform.tests
@@ -12,50 +13,50 @@ namespace jwplatform.tests
         [Fact]
         public void MakeRequest_GivenNullPath_ThrowsArgumentNullException()
         {
-            Action makeRequest = () => TestApi.MakeRequest(null);
+            Action makeRequest = () => TestApi.MakeGetRequest(null, null);
             Assert.Throws<ArgumentNullException>(makeRequest);
         }
 
         [Fact]
         public void MakeRequest_GivenNullRequestType_ThrowsArgumentNullException()
         {
-            Action makeRequest = () => TestApi.MakeRequest(null, "path");
+            Action makeRequest = () => TestApi.MakeRequest(null, "path", null, false);
             Assert.Throws<ArgumentNullException>(makeRequest);        
         }
 
         [Fact]
         public void MakeRequest_GivenUnsupportedRequestType_ThrowsException()
         {
-            Action makeRequest = () => TestApi.MakeRequest("Invalid", "path");
+            Action makeRequest = () => TestApi.MakeRequest("Invalid", "path", null, false);
             Assert.Throws<Exception>(makeRequest);        
         }
 
         [Fact]
-        public async void MakeRequest_GivenInvalidPath_ThrowsException()
+        public void MakeRequest_GivenInvalidPath_ThrowsException()
         {
-            Task makeRequest() => TestApi.MakeRequest("GET", "Invalid");
-            await Assert.ThrowsAsync<Exception>(makeRequest);        
+            Func<JObject> makeRequest = () => TestApi.MakeGetRequest("Invalid", null);
+            Assert.Throws<Exception>(makeRequest);        
         }
 
         [Fact]
-        public async void UploadFile_GivenNullFile_ThrowsException()
+        public void UploadFile_GivenNullFile_ThrowsException()
         {
-            Task uploadRequest() => TestApi.Upload(new Dictionary<string, string>(), null);
-            await Assert.ThrowsAsync<Exception>(uploadRequest);  
+            Func<JObject> uploadRequest = () => TestApi.Upload(new Dictionary<string, string>(), null);
+            Assert.Throws<Exception>(uploadRequest);  
         }
 
         [Fact]
-        public async void UploadFile_GivenInvalidFile_ThrowsException()
+        public void UploadFile_GivenInvalidFile_ThrowsException()
         {
-            Task uploadRequest() => TestApi.Upload(new Dictionary<string, string>(), "Invalid");
-            await Assert.ThrowsAsync<Exception>(uploadRequest);
+            Func<JObject> uploadRequest = () => TestApi.Upload(new Dictionary<string, string>(), "Invalid");
+            Assert.Throws<Exception>(uploadRequest);
         }
 
         [Fact]
-        public async void UploadFile_GivenInvalidFileType_ThrowsException()
+        public void UploadFile_GivenInvalidFileType_ThrowsException()
         {
-            Task uploadRequest() => TestApi.Upload(new Dictionary<string, string>(), "../../../resources/Test.txt");
-            await Assert.ThrowsAsync<Exception>(uploadRequest);
+            Func<JObject> uploadRequest = () => TestApi.Upload(new Dictionary<string, string>(), "../../../resources/Test.txt");
+            Assert.Throws<Exception>(uploadRequest);
         }
     }
 }

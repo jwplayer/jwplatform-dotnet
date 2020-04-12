@@ -13,20 +13,12 @@ namespace jwplatform {
             this.client = new Client(apiKey, apiSecret);
         }
 
-        public Task<JObject> MakeRequest(string path) {
-            return MakeRequest(path, null as Dictionary<string, string>);
+        public JObject MakeGetRequest(string path, Dictionary<string, string> requestParams) {
+            return MakeRequest("GET", path, requestParams, false);
         }
 
-        public Task<JObject> MakeRequest(string requestType, string path) {
-            return MakeRequest(requestType, path, null);
-        }
-
-        public Task<JObject> MakeRequest(string path, Dictionary<string, string> requestParams) {
-            return MakeRequest("GET", path, requestParams);
-        }
-
-        public Task<JObject> MakeRequest(string requestType, string path, Dictionary<string, string> requestParams) {
-            return MakeRequest(requestType, path, requestParams, false);
+        public JObject MakePostRequest(string path, Dictionary<string, string> requestParams, bool hasBodyParams) {
+            return MakeRequest("GET", path, requestParams, hasBodyParams);
         }
 
         /*
@@ -36,7 +28,7 @@ namespace jwplatform {
         * requestParams: can be null
         * hasBodyParams: false by default
         */
-        public Task<JObject> MakeRequest(
+        public JObject MakeRequest(
             string requestType,
             string path,
             Dictionary<string, string> requestParams,
@@ -50,18 +42,18 @@ namespace jwplatform {
 
             switch(requestType.ToUpper()) {
                 case "GET":
-                    return GetAsyncRequest(path, requestParams);
+                    return GetResult(GetAsyncRequest(path, requestParams));
 
                 case "POST":
-                    return PostAsyncRequest(path, requestParams, hasBodyParams);
+                    return GetResult(PostAsyncRequest(path, requestParams, hasBodyParams));
 
                 default:
                     throw new Exception("Request type not supported");
             }
         }
 
-        public async Task<JObject> Upload(Dictionary<string, string> videoOptions, string filePath) {
-            var videosCreateResponse = await Create(videoOptions);
+        public JObject Upload(Dictionary<string, string> videoOptions, string filePath) {
+            var videosCreateResponse = Create(videoOptions);
             var link = videosCreateResponse["link"];
             var qs = link["query"].ToObject<Dictionary<string, string>>();
 
@@ -71,38 +63,32 @@ namespace jwplatform {
             return JObject.Parse(uploadResponse);
         }
 
-        private Task<JObject> Create(Dictionary<string, string> videoData) {
+        private JObject Create(Dictionary<string, string> videoData) {
             return MakeRequest("POST", "videos/create", videoData, true);
         }
 
         private async Task<JObject> GetAsyncRequest(string path, Dictionary<string, string> requestParams) {
-            try {
-                var response = await client.GetAsync(path, requestParams);
-                return await ValidateResponse(response);
-            }
-            catch (Exception ex) {
-                throw ex;
-            }
+            var response = client.GetAsync(path, requestParams).Result;
+            return await ValidateResponse(response);
         }
 
         private async Task<JObject> PostAsyncRequest(string path, Dictionary<string, string> requestParams, bool hasBodyParams) {
-            try {
-                var response = await client.PostAsync(path, requestParams, hasBodyParams);
-                return await ValidateResponse(response);
-            }
-            catch (Exception ex) {
-                throw ex;
-            }
+            var response = await client.PostAsync(path, requestParams, hasBodyParams);
+            return await ValidateResponse(response);
         }
 
         private async Task<JObject> ValidateResponse(HttpResponseMessage response) {
-                var result = await response.Content.ReadAsStringAsync();
+            var result = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode) {
                 return JObject.Parse(result);
             }
             else {
                 throw new Exception("An error occurred. Status code: " + response.StatusCode + " - " + result);
             }
+        }
+
+        private JObject GetResult(Task<JObject> asyncRequestTask) {
+            return asyncRequestTask.GetAwaiter().GetResult();
         }
     }
 }
