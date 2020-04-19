@@ -28,7 +28,7 @@ namespace jwplatform
         }
 
         /// <summary>
-        /// Encodes <paramref name="stringToEncode" /> by converting characters to their hexidecimal representation.
+        /// Encodes <paramref name="stringToEncode" /> by converting characters to their hexadecimal representation.
         /// </summary>
         /// <see href="https://docs.microsoft.com/en-us/dotnet/api/system.uri.escapedatastring?view=netframework-4.8">
         /// MSDN Docs - URI.EscapeDataString
