@@ -8,8 +8,18 @@ using Moq.Protected;
 
 namespace jwplatform.tests
 {
+    /// <summary>
+    /// A mock client for unit testing.
+    /// </summary>
     internal static class MockClient
     {
+
+        /// <summary>
+        /// Generates a Client with a mock HttpClient.
+        /// </summary>
+        /// <param name="apiKey"> An Api Key string to pass to the Client. </param>
+        /// <param name="apiSecret"> An API Secret string to pass to the Client. </param>
+        /// <returns> A Client containing a mock HttpClient. </returns>
         public static Client GetMockClient(string apiKey, string apiSecret)
         {
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
@@ -28,6 +38,15 @@ namespace jwplatform.tests
             return new Client(apiKey, apiSecret, httpClient);
         }
 
+        /// <summary>
+        /// Creates a mock HttpRequestMessage for the request routes being unit tested.
+        /// </summary>
+        /// <param name="request"> An HttpRequestMessage from the request. </param>
+        /// <param name="cancelToken"> A CancellationToken from the request. </param>
+        /// <returns> The mock HttpResponseMessage. </returns>
+        /// <exception cref="NotImplementedException">
+        /// Thrown when trying to access a route not being unit tested.
+        /// </exception>
         private static Task<HttpResponseMessage> GetMockResponse(HttpRequestMessage request, CancellationToken cancelToken)
         {
             if (request.RequestUri.LocalPath == "/videos/show")
@@ -45,6 +64,10 @@ namespace jwplatform.tests
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Creates a mock success response formatted as a JSON string.
+        /// </summary>
+        /// <returns> The mock response string. </returns>
         private static string GetOkResponse()
         {
             return @"{

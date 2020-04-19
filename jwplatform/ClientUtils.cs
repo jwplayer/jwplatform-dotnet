@@ -33,7 +33,7 @@ namespace jwplatform
         /// MSDN Docs - URI.EscapeDataString
         /// </see>
         /// </summary>
-        /// <param name="stringToEncode">A string to encode </param>
+        /// <param name="stringToEncode"> A string to encode. </param>
         /// <returns> <paramref name="stringToEncode" /> as an encoded string. </returns>
         internal static string Encode(string stringToEncode)
         {
