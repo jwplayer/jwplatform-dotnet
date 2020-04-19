@@ -11,11 +11,10 @@
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
+    <PackageReference Include="Moq" Version="4.13.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\jwplatform\jwplatform.csproj">
-      <Project>{2C775EB7-E75A-4DED-B2E1-4EC7B0B0458B}</Project>
-      <Name>jwplatform</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
