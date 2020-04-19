@@ -65,13 +65,6 @@ namespace jwplatform.tests
         }
 
         [Fact]
-        public void MakePostRequest_GivenNoParameters_ThrowsArgumentNullException()
-        {
-            JObject makeRequest() => TestApi.MakePostRequest("/videos/create", null, false);
-            Assert.Throws<ArgumentNullException>(makeRequest);
-        }
-
-        [Fact]
         public void MakePostRequest_GivenValidDeletePath_CompletesSuccessfully()
         {
             var mockClient = MockClient.GetMockClient("testKey", "testSecret");

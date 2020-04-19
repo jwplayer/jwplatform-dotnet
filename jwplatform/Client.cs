@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -15,43 +14,48 @@ namespace jwplatform
         private readonly string apiKey;
         private readonly string apiSecret;
 
-        private readonly HttpClient httpClient;
+        internal readonly HttpClient httpClient;
+        private static readonly WebClient uploadClient = new WebClient();
 
-        public Client(string apiKey, string apiSecret) {
+        public Client(string apiKey, string apiSecret) : this(apiKey, apiSecret,
+            new HttpClient { BaseAddress = new Uri("https://api.jwplatform.com/v1") })
+        { }
+
+        internal Client(string apiKey, string apiSecret, HttpClient httpClient)
+        {
             if (apiKey == null || apiSecret == null)
                 throw new ArgumentNullException("API Key and API Secret cannot be null");
 
             this.apiKey = apiKey;
             this.apiSecret = apiSecret;
-            this.httpClient = new HttpClient {
-                BaseAddress = new Uri("https://api.jwplatform.com/v1"),
-            };
+            this.httpClient = httpClient;
         }
 
-        public async Task<HttpResponseMessage> GetAsync(string path, Dictionary<string, string> requestParams) {
+        public async Task<HttpResponseMessage> GetAsync(string path, Dictionary<string, string> requestParams)
+        {
             var fullUri = path + BuildParams(requestParams);
             return await httpClient.GetAsync(fullUri);
         }
 
-        public async Task<HttpResponseMessage> PostAsync(string path, Dictionary<string, string> requestParams, bool hasBodyParams) {
-            var array = requestParams.ToArray();
+        public async Task<HttpResponseMessage> PostAsync(string path, Dictionary<string, string> requestParams, bool hasBodyParams)
+        {
             var content = hasBodyParams ? new StringContent(JsonConvert.SerializeObject(requestParams)) : null;
             var fullUri = path + BuildParams(hasBodyParams ? null : requestParams);
 
             return await httpClient.PostAsync(fullUri, content);
         }
 
-        public string Upload(string uploadUrl, string filePath) {
+        public async Task<string> UploadAsync(string uploadUrl, string filePath)
+        {
             if (!File.Exists(filePath))
-                throw new ArgumentException("File does not exist");
+                throw new FileNotFoundException("File does not exist");
 
-            using (var webClient = new WebClient()) {
-                var response = webClient.UploadFile(new Uri(uploadUrl), filePath);
-                return System.Text.Encoding.ASCII.GetString(response);
-            }
+            var response = await uploadClient.UploadFileTaskAsync(new Uri(uploadUrl), filePath);
+            return Encoding.ASCII.GetString(response);
         }
 
-        private string BuildParams(Dictionary<string, string> requestParams) {
+        private string BuildParams(Dictionary<string, string> requestParams)
+        {
             var orderedParams = OrderParams(requestParams);
             var encodedParams = EncodeParams(orderedParams);
             var apiSignature = GenerateApiSignatureParam(encodedParams);
@@ -60,12 +64,13 @@ namespace jwplatform
             return signedParams;
         }
 
-        private SortedDictionary<string, string> OrderParams(Dictionary<string, string> requestParams) {
-            var orderedParams = requestParams == null 
-                ? new SortedDictionary<string, string>() 
+        private SortedDictionary<string, string> OrderParams(Dictionary<string, string> requestParams)
+        {
+            var orderedParams = requestParams == null
+                ? new SortedDictionary<string, string>()
                 : new SortedDictionary<string, string>(requestParams);
 
-            orderedParams.Add("api_key", this.apiKey);
+            orderedParams.Add("api_key", apiKey);
             orderedParams.Add("api_format", "json");
             orderedParams.Add("api_nonce", ClientUtils.GenerateNonce());
             orderedParams.Add("api_timestamp", ClientUtils.GetCurrentTimeInSeconds().ToString());
@@ -73,21 +78,24 @@ namespace jwplatform
             return orderedParams;
         }
 
-        private string EncodeParams(SortedDictionary<string, string> orderedParams) {
+        private string EncodeParams(SortedDictionary<string, string> orderedParams)
+        {
             var encodedParams = new StringBuilder();
-            foreach (var param in orderedParams.Keys) {
+            foreach (var param in orderedParams.Keys)
+            {
                 if (encodedParams.Length != 0)
                     encodedParams.Append("&");
 
-                var encodedKey = ClientUtils.EncodeString(param);
-                var encodedValue = ClientUtils.EncodeString(orderedParams[param]);
+                var encodedKey = ClientUtils.Encode(param);
+                var encodedValue = ClientUtils.Encode(orderedParams[param]);
                 encodedParams.Append(string.Format("{0}={1}", encodedKey, encodedValue));
             }
             return encodedParams.ToString();
         }
 
-        private string GenerateApiSignatureParam(string encodedParams) {
-            encodedParams += this.apiSecret;
+        private string GenerateApiSignatureParam(string encodedParams)
+        {
+            encodedParams += apiSecret;
             return string.Format("api_signature={0}", ClientUtils.GetSha1Hex(encodedParams.ToString()));
         }
     }
