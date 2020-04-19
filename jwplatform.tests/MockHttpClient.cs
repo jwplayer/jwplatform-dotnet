@@ -29,7 +29,7 @@ namespace jwplatform.tests
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>()
                 ).Returns((HttpRequestMessage request, CancellationToken cancelToken) =>
-                    GetMockResponse(request, cancelToken));
+                    GetMockResponse(request));
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object)
             {
@@ -47,18 +47,22 @@ namespace jwplatform.tests
         /// <exception cref="NotImplementedException">
         /// Thrown when trying to access a route not being unit tested.
         /// </exception>
-        private static Task<HttpResponseMessage> GetMockResponse(HttpRequestMessage request, CancellationToken cancelToken)
+        private static Task<HttpResponseMessage> GetMockResponse(HttpRequestMessage request)
         {
             if (request.RequestUri.LocalPath == "/videos/show")
             {
-                var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-                response.Content = new StringContent(GetOkResponse(), Encoding.UTF8, "application/json");
+                var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                {
+                    Content = new StringContent(GetOkResponse(), Encoding.UTF8, "application/json")
+                };
                 return Task.FromResult(response);
             }
             if (request.RequestUri.LocalPath == "/videos/delete")
             {
-                var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-                response.Content = new StringContent(GetOkResponse(), Encoding.UTF8, "application/json");
+                var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                {
+                    Content = new StringContent(GetOkResponse(), Encoding.UTF8, "application/json")
+                };
                 return Task.FromResult(response);
             }
             throw new NotImplementedException();

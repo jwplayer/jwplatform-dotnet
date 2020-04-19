@@ -12,14 +12,14 @@ namespace jwplatform.tests
         [Fact]
         public void MakeGetRequest_GivenNullPath_ThrowsArgumentNullException()
         {
-            Action makeRequest = () => TestApi.MakeGetRequest(null, null);
+            void makeRequest() => TestApi.MakeGetRequest(null, null);
             Assert.Throws<ArgumentNullException>(makeRequest);
         }
 
         [Fact]
         public void MakeGetRequest_GivenInvalidPath_ThrowsException()
         {
-            Func<JObject> makeRequest = () => TestApi.MakeGetRequest("Invalid", null);
+            JObject makeRequest() => TestApi.MakeGetRequest("Invalid", null);
             Assert.Throws<Exception>(makeRequest);
         }
 
@@ -53,21 +53,21 @@ namespace jwplatform.tests
         [Fact]
         public void MakePostRequest_GivenNullPath_ThrowsArgumentNullException()
         {
-            Action makeRequest = () => TestApi.MakePostRequest(null, new Dictionary<string, string>(), false);
+            void makeRequest() => TestApi.MakePostRequest(null, new Dictionary<string, string>(), false);
             Assert.Throws<ArgumentNullException>(makeRequest);
         }
 
         [Fact]
         public void MakePostRequest_GivenInvalidPath_ThrowsException()
         {
-            Func<JObject> makeRequest = () => TestApi.MakePostRequest("Invalid", new Dictionary<string, string>(), false);
+            JObject makeRequest() => TestApi.MakePostRequest("Invalid", new Dictionary<string, string>(), false);
             Assert.Throws<Exception>(makeRequest);
         }
 
         [Fact]
         public void MakePostRequest_GivenNoParameters_ThrowsArgumentNullException()
         {
-            Func<JObject> makeRequest = () => TestApi.MakePostRequest("/videos/create", null, false);
+            JObject makeRequest() => TestApi.MakePostRequest("/videos/create", null, false);
             Assert.Throws<ArgumentNullException>(makeRequest);
         }
 
