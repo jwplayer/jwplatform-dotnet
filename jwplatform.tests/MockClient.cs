@@ -15,11 +15,11 @@ namespace jwplatform.tests
     {
 
         /// <summary>
-        /// Generates a Client with a mock HttpClient.
+        /// Generates a <see cref="Client" /> with a mock HttpClient.
         /// </summary>
         /// <param name="apiKey"> An Api Key string to pass to the Client. </param>
         /// <param name="apiSecret"> An API Secret string to pass to the Client. </param>
-        /// <returns> A Client containing a mock HttpClient. </returns>
+        /// <returns> A <see cref="Client" /> containing a mock HttpClient. </returns>
         public static Client GetMockClient(string apiKey, string apiSecret)
         {
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();

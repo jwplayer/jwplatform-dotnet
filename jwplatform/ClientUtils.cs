@@ -29,10 +29,10 @@ namespace jwplatform
 
         /// <summary>
         /// Encodes <paramref name="stringToEncode" /> by converting characters to their hexidecimal representation.
+        /// </summary>
         /// <see href="https://docs.microsoft.com/en-us/dotnet/api/system.uri.escapedatastring?view=netframework-4.8">
         /// MSDN Docs - URI.EscapeDataString
         /// </see>
-        /// </summary>
         /// <param name="stringToEncode"> A string to encode. </param>
         /// <returns> <paramref name="stringToEncode" /> as an encoded string. </returns>
         internal static string Encode(string stringToEncode)
