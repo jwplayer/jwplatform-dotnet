@@ -7,10 +7,10 @@ using Newtonsoft.Json.Linq;
 namespace jwplatform
 {
     /// <summary>
-    /// Used to make JWPlatform API calls.
+    /// Used to make JW Platform API calls.
     /// </summary>
     /// <see href="https://github.com/jwplayer/jwplatform-dotnet">
-    /// JWPlatform Dotnet GitHub
+    /// JW Platform Dotnet GitHub
     /// </see>
     public class Api
     {
@@ -19,8 +19,8 @@ namespace jwplatform
         /// <summary>
         /// Constructor to instantiate Api with a <see cref="Client" /> to fulfill requests.
         /// </summary>
-        /// <param name="apiKey"> A JWPlatform API Key. </param>
-        /// <param name="apiSecret"> A JWPlatform API Secret. </param>
+        /// <param name="apiKey"> A JW Platform API Key. </param>
+        /// <param name="apiSecret"> A JW Platform API Secret. </param>
         public Api(string apiKey, string apiSecret) : this(new Client(apiKey, apiSecret))
         { }
 
@@ -70,7 +70,7 @@ namespace jwplatform
         /// A Dictionary of string keys and values of the request parameters. Set to null if there are none.
         /// </param>
         /// <param name="hasBodyParams">
-        /// A boolean indicating whether the parameters are body or query parameters.
+        /// A boolean indicating whether the <paramref name="requestParams" /> are body or query parameters.
         /// </param>
         /// <returns> A JSON Object response. </returns>
         public Task<JObject> MakePostRequestAsync(string requestPath, Dictionary<string, string> requestParams, bool hasBodyParams)
@@ -116,12 +116,12 @@ namespace jwplatform
         /// <param name="requestPath"> A string representing the request path. </param>
         /// <param name="requestParams"> A Dictionary of string keys and values of the request parameters. </param>
         /// <param name="hasBodyParams">
-        /// A boolean flag indicating if the request parameters are body parameters (true)
+        /// A boolean flag indicating if the <paramref name="requestParams" /> are body parameters (true)
         /// or query string parameters (false).
         /// </param>
         /// <returns> A JSON object of the request response. </returns>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when the request path is null.
+        /// Thrown when the <paramref name="requestPath" /> is null.
         /// </exception>
         private Task<JObject> MakeRequest(
             string requestType,

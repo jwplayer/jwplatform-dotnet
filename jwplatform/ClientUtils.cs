@@ -5,7 +5,7 @@ using System.Text;
 namespace jwplatform
 {
     /// <summary>
-    /// Contains helper functions used by the <c>Client</c> class.
+    /// Contains helper functions used by the <see cref="Client" /> class.
     /// </summary>
     internal static class ClientUtils
     {

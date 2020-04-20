@@ -9,18 +9,35 @@ using Newtonsoft.Json;
 
 namespace jwplatform
 {
+    /// <summary>
+    /// Used to create a custom JW Platform HTTP Client.
+    /// </summary>
     internal class Client
     {
         private readonly string apiKey;
         private readonly string apiSecret;
 
-        internal readonly HttpClient httpClient;
+        private readonly HttpClient httpClient;
         private static readonly WebClient uploadClient = new WebClient();
 
+        /// <summary>
+        /// Constructor used to create Client containing an HttpClient used to execute JW Platform API requests.
+        /// </summary>
+        /// <param name="apiKey"> A JW Platform API Key. </param>
+        /// <param name="apiSecret"> A JW Platform API Secret. </param>
         public Client(string apiKey, string apiSecret) : this(apiKey, apiSecret,
             new HttpClient { BaseAddress = new Uri("https://api.jwplatform.com/v1") })
         { }
 
+        /// <summary>
+        /// Constructor used for unit testing.
+        /// </summary>
+        /// <param name="apiKey"> A JW Platform API Key. </param>
+        /// <param name="apiSecret"> A JW Platform API Secret. </param>
+        /// <param name="httpClient"> An HttpClient. </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the <paramref name="apiKey" /> or <paramref name="apiSecret" /> is null.
+        /// </exception>
         internal Client(string apiKey, string apiSecret, HttpClient httpClient)
         {
             if (apiKey == null || apiSecret == null)
@@ -31,20 +48,41 @@ namespace jwplatform
             this.httpClient = httpClient;
         }
 
-        public async Task<HttpResponseMessage> GetAsync(string path, Dictionary<string, string> requestParams)
+        /// <summary>
+        /// Used to fulfill GET requests.
+        /// </summary>
+        /// <param name="requestPath"> A string representing the request route. </param>
+        /// <param name="requestParams"> A Dictionary of string keys and values of the request parameters. </param>
+        /// <returns> An HttpResponseMessage from the request. </returns>
+        public async Task<HttpResponseMessage> GetAsync(string requestPath, Dictionary<string, string> requestParams)
         {
-            var fullUri = path + BuildParams(requestParams);
+            var fullUri = requestPath + BuildParams(requestParams);
             return await httpClient.GetAsync(fullUri);
         }
 
-        public async Task<HttpResponseMessage> PostAsync(string path, Dictionary<string, string> requestParams, bool hasBodyParams)
+        /// <summary>
+        /// Used to fulfill POST requests.
+        /// </summary>
+        /// <param name="requestPath"> A string representing the request route. </param>
+        /// <param name="requestParams"> A Dictionary of string keys and values of the request parameters. </param>
+        /// <param name="hasBodyParams">
+        /// A boolean indicating if the <paramref name="requestParams" /> are body or query parameters.
+        /// </param>
+        /// <returns> An HttpResponseMessage from the request. </returns>
+        public async Task<HttpResponseMessage> PostAsync(string requestPath, Dictionary<string, string> requestParams, bool hasBodyParams)
         {
             var content = hasBodyParams ? new StringContent(JsonConvert.SerializeObject(requestParams)) : null;
-            var fullUri = path + BuildParams(hasBodyParams ? null : requestParams);
+            var fullUri = requestPath + BuildParams(hasBodyParams ? null : requestParams);
 
             return await httpClient.PostAsync(fullUri, content);
         }
 
+        /// <summary>
+        /// Used to fulfill Upload requests.
+        /// </summary>
+        /// <param name="uploadUrl"> A string representing the url to upload the file to. </param>
+        /// <param name="filePath"> A string representing the local video file path. </param>
+        /// <returns> A response string from the request. </returns>
         public async Task<string> UploadAsync(string uploadUrl, string filePath)
         {
             if (!File.Exists(filePath))
@@ -54,6 +92,12 @@ namespace jwplatform
             return Encoding.ASCII.GetString(response);
         }
 
+        /// <summary>
+        /// Alphabetically orders, encodes, and signs the <paramref name="requestParams" /> to be used
+        /// as query parameters for a JW Platform API request.
+        /// </summary>
+        /// <param name="requestParams"> A Dictionary of string keys and values of the request parameters. </param>
+        /// <returns> A string of query parameters. </returns>
         private string BuildParams(Dictionary<string, string> requestParams)
         {
             var orderedParams = OrderParams(requestParams);
@@ -64,6 +108,12 @@ namespace jwplatform
             return signedParams;
         }
 
+        /// <summary>
+        /// Alphabetically orders the <paramref name="requestParams" /> and adds the default parameters
+        /// required for a JW Platform API request.
+        /// </summary>
+        /// <param name="requestParams"> A Dictionary of string keys and values of the request parameters. </param>
+        /// <returns> A SortedDictionary of <paramref name="requestParams" />. </returns>
         private SortedDictionary<string, string> OrderParams(Dictionary<string, string> requestParams)
         {
             var orderedParams = requestParams == null
@@ -78,6 +128,13 @@ namespace jwplatform
             return orderedParams;
         }
 
+        /// <summary>
+        /// Encodes the <paramref name="orderedParams" /> to be compliant with the JW Platform API.
+        /// </summary>
+        /// <param name="orderedParams">
+        /// A SortedDictionary of string keys and values of request parameters.
+        /// </param>
+        /// <returns> An string of the encoded query parameters. </returns>
         private string EncodeParams(SortedDictionary<string, string> orderedParams)
         {
             var encodedParams = new StringBuilder();
@@ -93,6 +150,12 @@ namespace jwplatform
             return encodedParams.ToString();
         }
 
+        /// <summary>
+        /// Generates a secure hash from the encoded request parameters to be used as the API Signature for the
+        /// JW Platform API request.
+        /// </summary>
+        /// <param name="encodedParams"> A string of the encoded request parameters. </param>
+        /// <returns> A string of the API Signature query parameter. </returns>
         private string GenerateApiSignatureParam(string encodedParams)
         {
             encodedParams += apiSecret;
