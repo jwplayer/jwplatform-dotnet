@@ -12,14 +12,14 @@ namespace jwplatform.tests
         [Fact]
         public void MakeGetRequest_GivenNullPath_ThrowsArgumentNullException()
         {
-            void makeRequest() => TestApi.MakeGetRequest(null, null);
+            void makeRequest() => TestApi.GetRequest(null, null);
             Assert.Throws<ArgumentNullException>(makeRequest);
         }
 
         [Fact]
         public void MakeGetRequest_GivenInvalidPath_ThrowsException()
         {
-            JObject makeRequest() => TestApi.MakeGetRequest("Invalid", null);
+            JObject makeRequest() => TestApi.GetRequest("Invalid", null);
             Assert.Throws<Exception>(makeRequest);
         }
 
@@ -31,7 +31,7 @@ namespace jwplatform.tests
             var requestParams = new Dictionary<string, string> {
                 {"video_key", "MEDIA_ID"}
             };
-            var result = mockApi.MakeGetRequest("/videos/show", requestParams);
+            var result = mockApi.GetRequest("/videos/show", requestParams);
             Assert.Equal("Ok", result["status"]["message"]);
             Assert.Equal(200, result["status"]["code"]);
         }
@@ -45,7 +45,7 @@ namespace jwplatform.tests
                 {"video_key", "MEDIA_ID"},
                 {"special_characters", "te$t media&*"}
             };
-            var result = await mockApi.MakeGetRequestAsync("/videos/show", requestParams);
+            var result = await mockApi.GetRequestAsync("/videos/show", requestParams);
             Assert.Equal("Ok", result["status"]["message"]);
             Assert.Equal(200, result["status"]["code"]);
         }
@@ -53,14 +53,14 @@ namespace jwplatform.tests
         [Fact]
         public void MakePostRequest_GivenNullPath_ThrowsArgumentNullException()
         {
-            void makeRequest() => TestApi.MakePostRequest(null, new Dictionary<string, string>(), false);
+            void makeRequest() => TestApi.PostRequest(null, new Dictionary<string, string>(), false);
             Assert.Throws<ArgumentNullException>(makeRequest);
         }
 
         [Fact]
         public void MakePostRequest_GivenInvalidPath_ThrowsException()
         {
-            JObject makeRequest() => TestApi.MakePostRequest("Invalid", new Dictionary<string, string>(), false);
+            JObject makeRequest() => TestApi.PostRequest("Invalid", new Dictionary<string, string>(), false);
             Assert.Throws<Exception>(makeRequest);
         }
 
@@ -72,7 +72,7 @@ namespace jwplatform.tests
             var requestParams = new Dictionary<string, string> {
                 {"video_key", "MEDIA_ID"},
             };
-            var result = mockApi.MakePostRequest("/videos/delete", requestParams, true);
+            var result = mockApi.PostRequest("/videos/delete", requestParams, true);
 
             Assert.Equal("Ok", result["status"]["message"]);
             Assert.Equal(200, result["status"]["code"]);
@@ -87,7 +87,7 @@ namespace jwplatform.tests
                 {"video_key", "MEDIA_ID"},
                 {"special_characters", "te$t media&*"}
             };
-            var result = await mockApi.MakePostRequestAsync("/videos/delete", requestParams, true);
+            var result = await mockApi.PostRequestAsync("/videos/delete", requestParams, true);
             Assert.Equal("Ok", result["status"]["message"]);
             Assert.Equal(200, result["status"]["code"]);
         }
