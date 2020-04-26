@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace jwplatform
 {
@@ -56,8 +55,8 @@ namespace jwplatform
         /// <returns> An HttpResponseMessage from the request. </returns>
         public async Task<HttpResponseMessage> GetAsync(string requestPath, Dictionary<string, string> requestParams)
         {
-            var fullUri = requestPath + BuildParams(requestParams);
-            return await httpClient.GetAsync(fullUri);
+            var fullPath = requestPath + BuildQueryParams(requestParams);
+            return await httpClient.GetAsync(fullPath);
         }
 
         /// <summary>
@@ -71,10 +70,10 @@ namespace jwplatform
         /// <returns> An HttpResponseMessage from the request. </returns>
         public async Task<HttpResponseMessage> PostAsync(string requestPath, Dictionary<string, string> requestParams, bool hasBodyParams)
         {
-            var content = hasBodyParams ? new StringContent(JsonConvert.SerializeObject(requestParams)) : null;
-            var fullUri = requestPath + BuildParams(hasBodyParams ? null : requestParams);
+            var fullPath = requestPath + (hasBodyParams ? "" : BuildQueryParams(requestParams));
+            var content = hasBodyParams ? new FormUrlEncodedContent(BuildBodyParams(requestParams)) : null;
 
-            return await httpClient.PostAsync(fullUri, content);
+            return await httpClient.PostAsync(fullPath, content);
         }
 
         /// <summary>
@@ -98,14 +97,27 @@ namespace jwplatform
         /// </summary>
         /// <param name="requestParams"> A Dictionary of string keys and values of the request parameters. </param>
         /// <returns> A string of query parameters. </returns>
-        private string BuildParams(Dictionary<string, string> requestParams)
+        private string BuildQueryParams(Dictionary<string, string> requestParams)
         {
             var orderedParams = OrderParams(requestParams);
             var encodedParams = EncodeParams(orderedParams);
-            var apiSignature = GenerateApiSignatureParam(encodedParams);
+            var apiSignature = GenerateApiSignature(encodedParams);
+            return "?" + encodedParams + "&api_signature=" + apiSignature;
+        }
 
-            var signedParams = "?" + encodedParams + "&" + apiSignature;
-            return signedParams;
+        /// <summary>
+        /// Alphabetically orders, encodes, and signs the <paramref name="requestParams" /> to be used
+        /// as body parameters for a JW Platform API request.
+        /// </summary>
+        /// <param name="requestParams"> A Dictionary of string keys and values of the request parameters. </param>
+        /// <returns> A SortedDictionary with string keys and values of body parameters. </returns>
+        private SortedDictionary<string, string> BuildBodyParams(Dictionary<string, string> requestParams)
+        {
+            var orderedParams = OrderParams(requestParams);
+            var encodedParams = EncodeParams(orderedParams);
+            var apiSignature = GenerateApiSignature(encodedParams);
+            orderedParams.Add("api_signature", apiSignature);
+            return orderedParams;
         }
 
         /// <summary>
@@ -155,11 +167,11 @@ namespace jwplatform
         /// JW Platform API request.
         /// </summary>
         /// <param name="encodedParams"> A string of the encoded request parameters. </param>
-        /// <returns> A string of the API Signature query parameter. </returns>
-        private string GenerateApiSignatureParam(string encodedParams)
+        /// <returns> A string of the API Signature parameter. </returns>
+        private string GenerateApiSignature(string encodedParams)
         {
             encodedParams += apiSecret;
-            return string.Format("api_signature={0}", ClientUtils.GetSha1Hex(encodedParams.ToString()));
+            return ClientUtils.GetSha1Hex(encodedParams);
         }
     }
 }
