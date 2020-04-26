@@ -34,11 +34,11 @@ namespace jwplatform
         }
 
         /// <summary>
-        /// The synchronous version of <see cref="Api.MakeGetRequestAsync(string, Dictionary{string, string})" />.
+        /// The synchronous version of <see cref="Api.GetRequestAsync(string, Dictionary{string, string})" />.
         /// </summary>
-        public JObject MakeGetRequest(string path, Dictionary<string, string> requestParams)
+        public JObject GetRequest(string path, Dictionary<string, string> requestParams)
         {
-            return GetResult(MakeGetRequestAsync(path, requestParams));
+            return GetResult(GetRequestAsync(path, requestParams));
         }
 
         /// <summary>
@@ -49,17 +49,17 @@ namespace jwplatform
         /// A Dictionary of string keys and values of the request parameters. Set to null if there are none.
         /// </param>
         /// <returns> A JSON Object response. </returns>
-        public Task<JObject> MakeGetRequestAsync(string requestPath, Dictionary<string, string> requestParams)
+        public Task<JObject> GetRequestAsync(string requestPath, Dictionary<string, string> requestParams)
         {
             return MakeRequest("GET", requestPath, requestParams, false);
         }
 
         /// <summary>
-        /// The synchronous version of <see cref="Api.MakePostRequestAsync(string, Dictionary{string, string}, bool)" />.
+        /// The synchronous version of <see cref="Api.PostRequestAsync(string, Dictionary{string, string}, bool)" />.
         /// </summary>
-        public JObject MakePostRequest(string path, Dictionary<string, string> requestParams, bool hasBodyParams)
+        public JObject PostRequest(string path, Dictionary<string, string> requestParams, bool hasBodyParams)
         {
-            return GetResult(MakePostRequestAsync(path, requestParams, hasBodyParams));
+            return GetResult(PostRequestAsync(path, requestParams, hasBodyParams));
         }
 
         /// <summary>
@@ -73,17 +73,17 @@ namespace jwplatform
         /// A boolean indicating whether the <paramref name="requestParams" /> are body or query parameters.
         /// </param>
         /// <returns> A JSON Object response. </returns>
-        public Task<JObject> MakePostRequestAsync(string requestPath, Dictionary<string, string> requestParams, bool hasBodyParams)
+        public Task<JObject> PostRequestAsync(string requestPath, Dictionary<string, string> requestParams, bool hasBodyParams)
         {
             return MakeRequest("POST", requestPath, requestParams, hasBodyParams);
         }
 
         /// <summary>
-        /// The synchronous version of <see cref="Api.UploadAsync(Dictionary{string, string}, string)" />.
+        /// The synchronous version of <see cref="Api.UploadRequestAsync(Dictionary{string, string}, string)" />.
         /// </summary>
-        public JObject Upload(Dictionary<string, string> videoInfo, string filePath)
+        public JObject UploadRequest(Dictionary<string, string> videoInfo, string filePath)
         {
-            return GetResult(UploadAsync(videoInfo, filePath));
+            return GetResult(UploadRequestAsync(videoInfo, filePath));
         }
 
         /// <summary>
@@ -96,21 +96,21 @@ namespace jwplatform
         /// </param>
         /// <param name="filePath"> A string representing the local path to the video file. </param>
         /// <returns> A JSON Object response. </returns>
-        public async Task<JObject> UploadAsync(Dictionary<string, string> videoInfo, string filePath)
+        public async Task<JObject> UploadRequestAsync(Dictionary<string, string> videoInfo, string filePath)
         {
-            var videosCreateResponse = await MakePostRequestAsync("videos/create", videoInfo, true);
+            var videosCreateResponse = await PostRequestAsync("videos/create", videoInfo, true);
             var link = videosCreateResponse["link"];
             var qs = link["query"].ToObject<Dictionary<string, string>>();
 
-            var uploadUrl = link["protocol"] + "://" + link["address"] + link["path"] + 
+            var uploadUrl = link["protocol"] + "://" + link["address"] + link["path"] +
                 "?api_format=json&key=" + qs["key"] + "&token=" + qs["token"];
 
             return ValidateUploadResponse(await client.UploadAsync(uploadUrl, filePath));
         }
 
         /// <summary>
-        /// General method called by <see cref="Api.MakeGetRequestAsync(string, Dictionary{string, string})" /> and
-        /// <see cref="Api.MakePostRequestAsync(string, Dictionary{string, string}, bool)" />.
+        /// General method called by <see cref="Api.GetRequestAsync(string, Dictionary{string, string})" /> and
+        /// <see cref="Api.PostRequestAsync(string, Dictionary{string, string}, bool)" />.
         /// </summary>
         /// <param name="requestType"> A string indicating the request tye (GET or POST). </param>
         /// <param name="requestPath"> A string representing the request path. </param>
