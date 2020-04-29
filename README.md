@@ -1,8 +1,8 @@
 # JW Platform API
 The .NET client library for accessing the  [JW Platform Management API](https://developer.jwplayer.com/jwplayer/docs/getting-started-with-content-management) written in C#.
 # Requirements
-C# 5.0+
-.NET Framework 4.5+ 
+C# 5.0+\
+.NET Framework 4.5+\
 .NET Core 1.0+
 # Installation
 # Methods
@@ -22,7 +22,8 @@ Import the `jwplatform` library:
 ```csharp
 using jwplatform;
 ```
-Initialize a new `jwplatform` API with your API Key and API Secret ([Here](https://support.jwplayer.com/articles/how-to-find-your-api-key-and-secret) is how to find those values):
+Initialize a new `jwplatform` API with your API Key and API Secret\
+([Here](https://support.jwplayer.com/articles/how-to-find-your-api-key-and-secret) is how to find those values):
 ```csharp
 var jwplatformApi = new Api(API_KEY, API_SECRET);
 ```
@@ -80,7 +81,7 @@ var response = jwplatformApi.PostRequest("/accounts/tags/create", requestParams,
 ```
 ### Example 4: Upload
 Uploading files is a two-step process. 
-1. A `/videos/create` call is done to set up the video's info. 
+1. A `/videos/create` call is done to set up the video's info.\ 
 (See [here](https://developer.jwplayer.com/jwplayer/reference#post_videos-create) to see the video info properties that can be set)
 2. The video file is uploaded.
 
@@ -103,7 +104,10 @@ var response = await jwplatformApi.UploadAsync(videoInfo, localFilePath);
 // Synchronously
 var response = jwplatformApi.UploadRequest(videoInfo, localFilePath);
 ```
+# Tests
+
 # Supported Operations
 All Management API endpoints are supported. Please refer [here](https://developer.jwplayer.com/jwplayer/reference#management-api-introduction).
-# Change Log
 # License
+This JW Platform API library is distributed under the
+[Apache 2 License](LICENSE)
