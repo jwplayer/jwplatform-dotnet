@@ -1,6 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>jwplatform</PackageId>
+    <PackageDescription>The .NET client library for accessing the JW Platform Management API.</PackageDescription>
+    <Version>1.0.1</Version>
+    <Authors>JW Player</Authors>
+    <Company>JW Player</Company>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/jwplayer/jwplatform-dotnet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://developer.jwplayer.com/jwplayer/docs/getting-started-with-content-management</PackageProjectUrl>
+    <PackageTags>jwplayer;jw player;jwplatform;platform</PackageTags>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
