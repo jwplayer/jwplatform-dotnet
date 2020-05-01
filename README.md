@@ -5,6 +5,22 @@ C# 5.0+\
 .NET Framework 4.5+\
 .NET Core 1.0+
 # Installation
+This library is available as a [Nuget Package](https://www.nuget.org/packages/jwplatform/).
+
+* #### [Using Visual Studio (Windows)](https://docs.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio)
+	On the project you want to add the library to:
+	* Right click "References" -> "Manage Nuget Packages"
+	* Search for `jwplatform` -> Click "Install"
+	
+* #### [Using Visual Studio (Mac)](https://docs.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio-mac)
+	On the project you want to add the library to:
+	* Right click "Dependencies" -> "Manage Nuget Packages"
+	* Search for `jwplatform` -> Click "Add Package"
+
+* #### [Using .NET CLI](https://docs.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio-mac)
+	```
+	dotnet add package jwplatform
+	```
 # Methods
 The docs for API endpoints can be found in the [Supported Operations](#Supported-Operations) section below.
 | Method  | Use |
@@ -104,10 +120,18 @@ var response = await jwplatformApi.UploadAsync(videoInfo, localFilePath);
 // Synchronously
 var response = jwplatformApi.UploadRequest(videoInfo, localFilePath);
 ```
-# Tests
+# Test
+To run the unit tests, you must have a local copy of the client. You can easily run the tests using Visual Studio by opening the Test Explorer. 
+
+If using .NET CLI, run the following command in the root of the project:
+```
+dotnet test
+```
 
 # Supported Operations
 All Management API endpoints are supported. Please refer [here](https://developer.jwplayer.com/jwplayer/reference#management-api-introduction).
 # License
 This JW Platform API library is distributed under the
 [Apache 2 License](LICENSE)
+
+**For any requests, bug or comments, please [open an issue](issues) or [submit a pull request](pulls).**
