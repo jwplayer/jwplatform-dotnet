@@ -97,7 +97,7 @@ var response = jwplatformApi.PostRequest("/accounts/tags/create", requestParams,
 ```
 ### Example 4: Upload
 Uploading files is a two-step process. 
-1. A `/videos/create` call is done to set up the video's info.\ 
+1. A `/videos/create` call is done to set up the video's info.\
 (See [here](https://developer.jwplayer.com/jwplayer/reference#post_videos-create) to see the video info properties that can be set)
 2. The video file is uploaded.
 
@@ -134,4 +134,4 @@ All Management API endpoints are supported. Please refer [here](https://develope
 This JW Platform API library is distributed under the
 [Apache 2 License](LICENSE)
 
-**For any requests, bug or comments, please [open an issue](issues) or [submit a pull request](pulls).**
+**For any requests, bug or comments, please [open an issue](https://github.com/jwplayer/jwplatform-dotnet/issues) or [submit a pull request](https://github.com/jwplayer/jwplatform-dotnet/pulls).**
