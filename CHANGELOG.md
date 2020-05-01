@@ -1,5 +1,5 @@
 ## 1.0.1
-* Updating package information.
+* Package information updated.
 
 ## 1.0.0
 * Initial release of the JW Platform API.
